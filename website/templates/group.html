@@ -1,0 +1,167 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+<br>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-auto">
+      <h2 align="center" >Your other groups</h2>
+        <ul class="list-group list-group-flush" id="groups">
+         {% for group in user.groups %}
+          <li class="list-group-item">
+            <a href="group-view-{{ group.id }}" class="badge badge-primary">{{ group.name }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      <br>
+      <h2 align="center">Group members</h2>
+      <ul class="list-group list-group-flush">
+        {% for member in group.members %}
+        <li class="list-group-item">
+          {% if member.name == user.first_name: %}
+              {{ member.name }} (You)
+            {% else %}
+              {{ member.name }}
+            {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      <br>
+      <div class="card">
+        <h5 class="card-header">Add new expense!</h5>
+        <div class="card-body">
+          <form method="POST">
+            <div class="form-group">
+              <label for="expense_name_id">Name</label><br>
+              <input type="text" id="expense_name_id" name="expense_name" class="form-control">
+              <label for="expense_amount_id">Amount</label>
+              <input type="number" id="expense_amount_id" name="expense_amount" class="form-control">
+              <label for="paid_by_list">Who paid</label>
+              <select id="paid_by_list" class="form-control" name="expense_payer">
+                {% for member in group.members %}
+                  {% if member.name == user.first_name: %}
+                    <option>{{ member.name }} (You)</option>
+                  {% else %}
+                    <option>{{ member.name }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+              <br>
+              <div class="form-group">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="split" name="expense_split_bool" onclick="showList()" checked>
+                  <label class="form-check-label" for="split">
+                    Split equally
+                  </label>
+                </div>
+              </div>
+              <div id="split_among" style="display:none">
+                <ul class="list-group">
+                {% for member in group.members %}
+                    <li class="list-group-item">
+                      <input class="form-check-input" type="checkbox" value="" id="split{{member.id}}" name="expense_split_among_{{member.id}}" onclick="showList()" >
+                      <label class="form-check-label" for="split{{member.id}}">
+                        {{member.name}}
+                      </label>
+                    </li>
+                {% endfor %}
+                </ul>
+              </div>
+              <br>
+              <div align="center">
+                <button type="submit" name="submit_button" class="btn btn-primary" value="add_group">Add Expense</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-5">
+      <h1 align="center">Group - {{group.name}}</h1>
+      <ul class="list-group list-group-flush" id="expenses">
+        {% for expense in group.expenses %}
+        <li class="list-group-item">
+          <div class="card">
+            <div class="card-body">
+              <button type="button" class="close" onClick="deleteExpense({{ expense.id }}, {{ group.id }})">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h5 class="card-title"> {{expense.name}}</h5>
+              {% for member in group.members %}
+                {% if member.id == expense.paid_by %}
+                  <h6 class="card-subtitle mb-2 text-muted">Paid {{expense.amount}}$ by {{member.name}}</h6>
+                {% endif %}
+              {% endfor %}
+              <h9 class="card-subtitle mb-2">Splits among:</h9>
+              <ul class="list-group">
+                {% for debtor in expense.debtors %}
+                  <li class="list-group-item">
+                    {% for member in group.members %}
+                      {% if debtor.group_user_id == member.id %}
+                        {{ member.name }}
+                      {% endif %}
+                    {% endfor %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col-md-auto">
+      <h2 align="center">Group balance</h2>
+      <ul class="list-group list-group-flush" id="balances">
+        {% if group_balance %}
+          {% for user in group_balance %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {% for member in group.members %}
+              {% if user[0]  == member.id %}
+                {{ member.name }}
+              {% endif %}
+            {% endfor %}
+            {% if user[1] < 0 %}
+              <span class="badge badge-danger rounded-pill">Owes {{ (user[1]|abs)|round(2) }}</span>
+            {% else %}
+              <span class="badge badge-success rounded-pill">Gets {{ user[1]|round(2) }}</span>
+            {% endif %}
+          </li>
+          {% endfor %}
+        {% endif %}
+      </ul>
+      <h2 align="center">Transactions</h2>
+      <ul class="list-group list-group-flush" id="transactions">
+          {% for tx in transactions %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {% for member in group.members %}
+                {% if tx[0]  == member.id %}
+                    {% for member_two in group.members %}
+                      {% if tx[1]  == member_two.id %}
+                        {{ member.name }}
+                        <span class="badge badge-secondary">{{ tx[2]|round(2) }}➡</span>
+                        {{ member_two.name }}
+                      {% endif %}
+                    {% endfor %}
+                {% endif %}
+              {% endfor %}
+              </li>
+          {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+function showList() {
+  var checkBox_split = document.getElementById("split");
+  var text = document.getElementById("split_among");
+  if (checkBox_split.checked == false){
+    text.style.display = "block";
+  } else {
+    text.style.display = "none";
+  }
+}
+
+</script>
+{% endblock %}
+

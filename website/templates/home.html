@@ -1,21 +1,33 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
 %}
-<h1 align="center">Notes</h1>
-<ul class="list-group list-group-flush" id="notes">
-  {% for note in user.notes %}
+<h1 align="center">Your groups</h1>
+<ul class="list-group list-group-flush" id="groups">
+  {% for group in user.groups %}
   <li class="list-group-item">
-    {{ note.data }}
-    <button type="button" class="close" onClick="deleteNote({{ note.id }})">
+    <a href="group-view-{{ group.id }}" class="badge badge-primary">{{ group.name }}</a>
+    <button type="button" class="close" onClick="deleteGroup({{ group.id }})">
       <span aria-hidden="true">&times;</span>
     </button>
   </li>
   {% endfor %}
 </ul>
-<form method="POST">
-  <textarea name="note" id="note" class="form-control"></textarea>
-  <br />
-  <div align="center">
-    <button type="submit" class="btn btn-primary">Add Note</button>
+<br></br>
+<div class="card">
+  <h5 class="card-header">Add new group!</h5>
+  <div class="card-body">
+  <form method="POST">
+    <div class="form-group">
+      <label for="group_name_id">Name</label><br>
+      <input type="text" id="group_name_id" name="group_name" class="form-control">
+      <label for="member_name_id">Add members</label><br>
+      <input type="text" id="member_name_id" name="member_name" class="form-control">
+      <label for="group_id">Description</label><br>
+      <textarea name="group" id="group_id" class="form-control"></textarea><br><br />
+      <div align="center">
+        <button type="submit" name="submit_button" class="btn btn-primary" value="add_group">Add Group</button>
+      </div>
+    </div>
+  </form>
   </div>
-</form>
+</div>
 {% endblock %}
