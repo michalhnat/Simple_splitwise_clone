@@ -1,5 +1,6 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
 %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <br>
 <div class="container-fluid">
   <div class="row">
@@ -75,9 +76,9 @@
         </div>
       </div>
     </div>
-    <div class="col-5">
+    <div class="col-5" id="center-col">
       <h1 align="center">Group - {{group.name}}</h1>
-      <ul class="list-group list-group-flush" id="expenses">
+      <ul class="list-group list-group-flush overflow-auto" id="expenses" style="max-height: 100vh;">
         {% for expense in group.expenses %}
         <li class="list-group-item">
           <div class="card">
@@ -129,6 +130,7 @@
           {% endfor %}
         {% endif %}
       </ul>
+      <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
       <h2 align="center">Transactions</h2>
       <ul class="list-group list-group-flush" id="transactions">
           {% for tx in transactions %}
@@ -162,6 +164,62 @@ function showList() {
   }
 }
 
+
+
+
+const ctx = document.getElementById('myChart');
+
+var Labels_users = [];
+var Data_positive = [];
+var Data_negative = [];
+
+{% for user in group_balance %}
+  {% for member in group.members %}
+    {% if user[0]  == member.id %}
+      Labels_users.push("{{member.name}}");
+    {% endif %}
+  {% endfor %}
+  {% if user[1] < 0 %}
+    Data_negative.push({{ user[1]|round(2) }});
+    Data_positive.push(0);
+  {% else %}
+    Data_positive.push({{ user[1]|round(2) }});
+    Data_negative.push(0);
+  {% endif %}
+{% endfor %}
+
+console.log(Labels_users);
+console.log(Data_positive);
+console.log(Data_negative);
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: Labels_users,
+      datasets: [{
+        label: 'Debit',
+        data: Data_positive,
+        backgroundColor: 'rgba(40,167,69,1)',
+        borderWidth: 1
+      },
+      {
+        label: 'Credit',
+        data: Data_negative,
+        backgroundColor: 'rgba(220,53,69,1)',
+        borderWidth: 1
+      }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
 </script>
+
+
 {% endblock %}
 
