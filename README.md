@@ -1,8 +1,11 @@
-# Flask Web App Tutorial
+# Simple_splitwise_clone
+
+## Sources
+* [User managment](https://github.com/techwithtim/Flask-Web-App-Tutorial)
+* [Debt simplification](https://github.com/Shivashish1010/Simplify-Debts/blob/master/simplify_debts.py)
+
 
 ## Setup & Installation
-
-Make sure you have the latest version of Python installed.
 
 ```bash
 git clone <repo-url>
