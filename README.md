@@ -1,8 +1,11 @@
 # Simple_splitwise_clone
 
-## Setup & Installation
+## Sources
+* [User managment](https://github.com/techwithtim/Flask-Web-App-Tutorial)
+* [Debt simplification](https://github.com/Shivashish1010/Simplify-Debts/blob/master/simplify_debts.py)
 
-Make sure you have the latest version of Python installed.
+
+## Setup & Installation
 
 ```bash
 git clone <repo-url>
