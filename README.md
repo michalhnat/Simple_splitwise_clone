@@ -1,4 +1,4 @@
-# Flask Web App Tutorial
+# Simple_splitwise_clone
 
 ## Setup & Installation
 
