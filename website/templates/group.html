@@ -4,7 +4,7 @@
 <br>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-auto">
+    <div class="col">
       <h2 align="center" >Your other groups</h2>
         <ul class="list-group list-group-flush" id="groups">
          {% for group in user.groups %}
@@ -13,19 +13,6 @@
           </li>
           {% endfor %}
         </ul>
-      <br>
-      <h2 align="center">Group members</h2>
-      <ul class="list-group list-group-flush">
-        {% for member in group.members %}
-        <li class="list-group-item">
-          {% if member.name == user.first_name: %}
-              {{ member.name }} (You)
-            {% else %}
-              {{ member.name }}
-            {% endif %}
-        </li>
-        {% endfor %}
-      </ul>
       <br>
       <div class="card">
         <h5 class="card-header">Add new expense!</h5>
@@ -78,6 +65,24 @@
     </div>
     <div class="col-5" id="center-col">
       <h1 align="center">Group - {{group.name}}</h1>
+      <ul class="list-group">
+        {% for payback in group.paybacks %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {% for member in group.members %}
+            {% if  payback.payer == member.id %}
+              {% for member_two in group.members %}
+                {% if payback.reciver  == member_two.id %}
+                  <span class="font-weight-bold">{{ member.name }}</span>paid
+                  <span class="badge badge-pill badge-primary">{{payback.amount}}</span>
+                  <span>to</span>
+                  <span class="font-weight-bold">{{member_two.name}}</span>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </li>
+        {% endfor %}
+      </ul>
       <ul class="list-group list-group-flush overflow-auto" id="expenses" style="max-height: 100vh;">
         {% for expense in group.expenses %}
         <li class="list-group-item">
@@ -110,8 +115,8 @@
         {% endfor %}
       </ul>
     </div>
-    <div class="col-md-auto">
-      <h2 align="center">Group balance</h2>
+    <div class="col">
+      <h2 align="center">Members balance</h2>
       <ul class="list-group list-group-flush" id="balances">
         {% if group_balance %}
           {% for user in group_balance %}
@@ -123,8 +128,10 @@
             {% endfor %}
             {% if user[1] < 0 %}
               <span class="badge badge-danger rounded-pill">Owes {{ (user[1]|abs)|round(2) }}</span>
-            {% else %}
+            {% elif user[1] > 0 %}
               <span class="badge badge-success rounded-pill">Gets {{ user[1]|round(2) }}</span>
+            {% else %}
+              <span class="badge badge-primary rounded-pill">Settled!</span>
             {% endif %}
           </li>
           {% endfor %}
@@ -146,7 +153,16 @@
                     {% endfor %}
                 {% endif %}
               {% endfor %}
-              </li>
+              {% for member in group.members %}
+                {% if tx[0]  == member.id %}
+                  {% for member_two in group.members %}
+                    {% if tx[1]  == member_two.id %}
+                      <button type="button" class="btn btn-success btn-sm" onClick="deleteUserDebts({{member.id}}, {{group.id}}, {{member_two.id}}, {{tx[2]}})">Settle up!</button>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </li>
           {% endfor %}
       </ul>
     </div>
@@ -200,13 +216,15 @@ console.log(Data_negative);
         label: 'Debit',
         data: Data_positive,
         backgroundColor: 'rgba(40,167,69,1)',
-        borderWidth: 1
+        borderWidth: 1,
+        borderRadius: 1
       },
       {
         label: 'Credit',
         data: Data_negative,
         backgroundColor: 'rgba(220,53,69,1)',
-        borderWidth: 1
+        borderWidth: 1,
+        borderRadius: 1
       }
       ]
     },

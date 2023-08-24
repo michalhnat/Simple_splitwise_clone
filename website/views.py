@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
-from .models import Group, Group_users, Expense, Debtors
+from .models import Group, Group_users, Expense, Debtors, Payback
 from . import db
 from .calculations import Total_balance
 import json
@@ -76,7 +76,7 @@ def group_view(current_id):
     if group.creator_id == current_user.id:
         group_balance = Total_balance(members, group).get_balance()
         debt_settlement = Total_balance(members, group).simplify_debts()
-        print(debt_settlement)
+
         return render_template('group.html', user=current_user, group=group, group_balance=group_balance, transactions=debt_settlement)
     else:
         flash('You dont have access to that page', category='error')
@@ -86,7 +86,7 @@ def group_view(current_id):
 @views.route('/delete-group', methods=['POST'])
 def delete_group():
     group = json.loads(request.data) # this function expects a JSON from the INDEX.js file
-    print(group)
+    #print(group)
     groupId = group['groupId']
     group = Group.query.get(groupId)
     #group_users = Group_users.query.get(groupId)
@@ -106,9 +106,29 @@ def delete_expense():
     expense = Expense.query.get(expenseId)
     #group_users = Group_users.query.get(groupId)
     #print(group_users)
-    print(expense)
     if expense:
         db.session.delete(expense)
         db.session.commit()
+
+    return jsonify({})
+
+@views.route('/delete-user-debt', methods=['POST'])
+def delete_user_debt():
+    user_debt = json.loads(request.data) # this function expects a JSON from the INDEX.js file
+    print(user_debt)
+    payer_id= user_debt['MemberId']
+    reciver_id = user_debt['Member_twoId']
+    amount = user_debt['Amount']
+    group_id = user_debt['GroupId']
+    if user_debt:
+        new_payback = Payback(payer=payer_id, reciver=reciver_id, amount=amount, group_id=group_id)
+        db.session.add(new_payback)
+        db.session.commit()
+
+
+    #print(payer_id, reciver_id)
+    #if expense:
+    #    db.session.delete(expense)
+    #    db.session.commit()
 
     return jsonify({})

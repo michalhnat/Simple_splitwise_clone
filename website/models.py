@@ -2,6 +2,13 @@ from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 
+class Payback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Integer)
+    payer = db.Column(db.Integer, db.ForeignKey('group_users.id'))
+    reciver =  db.Column(db.Integer, db.ForeignKey('group_users.id'))
+    group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
+
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name =  db.Column(db.String(100))
@@ -24,6 +31,7 @@ class Group(db.Model):
     members = db.relationship('Group_users', cascade="all, delete")
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     creator_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    paybacks = db.relationship('Payback', cascade="all, delete")
 
 class Group_users(db.Model):
     id = db.Column(db.Integer, primary_key=True)

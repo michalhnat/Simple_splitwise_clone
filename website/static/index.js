@@ -16,3 +16,12 @@ function deleteExpense(expenseId, groupId) {
     window.location.href = `/group-view-${groupId}`;
   });
 }
+
+function deleteUserDebts(memberId, groupId, member_twoId, amount) {
+  fetch("/delete-user-debt", {
+    method: "POST",
+    body: JSON.stringify({ MemberId: memberId, Member_twoId: member_twoId, Amount: amount, GroupId: groupId}),
+  }).then((_res) => {
+    window.location.href = `/group-view-${groupId}`;
+  });
+}

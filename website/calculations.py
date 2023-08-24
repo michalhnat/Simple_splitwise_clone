@@ -3,6 +3,7 @@ import heapq
 class Total_balance():
     def __init__(self, members, group):
         self.balances = []
+        self.paybacks = []
         for member in members:
             self.balances.append([member.id, 0])
 
@@ -10,6 +11,10 @@ class Total_balance():
             next(m for m in self.balances if m[0] == e.paid_by)[1] += e.amount
             for d in e.debtors:
                 next(mem for mem in self.balances if mem[0] == d.group_user_id)[1] -= d.debt_amount
+
+        for p in group.paybacks:
+            next(m for m in self.balances if m[0] == p.payer)[1] += p.amount
+            next(m for m in self.balances if m[0] == p.reciver)[1] -= p.amount
 
     def get_balance(self):
         return self.balances
