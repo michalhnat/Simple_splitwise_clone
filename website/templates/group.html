@@ -76,6 +76,9 @@
                   <span class="badge badge-pill badge-primary">{{payback.amount}}</span>
                   <span>to</span>
                   <span class="font-weight-bold">{{member_two.name}}</span>
+                  <button type="button" class="close" onClick="deletePayback({{ payback.id }}, {{ group.id }})">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                 {% endif %}
               {% endfor %}
             {% endif %}

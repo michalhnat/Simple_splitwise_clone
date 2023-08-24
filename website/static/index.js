@@ -17,6 +17,15 @@ function deleteExpense(expenseId, groupId) {
   });
 }
 
+function deletePayback(paybackId, groupId) {
+  fetch("/delete-payback", {
+    method: "POST",
+    body: JSON.stringify({ PaybackId: paybackId }),
+  }).then((_res) => {
+    window.location.href = `/group-view-${groupId}`;
+  });
+}
+
 function deleteUserDebts(memberId, groupId, member_twoId, amount) {
   fetch("/delete-user-debt", {
     method: "POST",

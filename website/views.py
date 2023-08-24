@@ -112,6 +112,19 @@ def delete_expense():
 
     return jsonify({})
 
+@views.route('/delete-payback', methods=['POST'])
+def delete_payback():
+    payback = json.loads(request.data) # this function expects a JSON from the INDEX.js file
+    PaybackId = payback['PaybackId']
+    payback = Payback.query.get(PaybackId)
+    #group_users = Group_users.query.get(groupId)
+    #print(group_users)
+    if payback:
+        db.session.delete(payback)
+        db.session.commit()
+
+    return jsonify({})
+
 @views.route('/delete-user-debt', methods=['POST'])
 def delete_user_debt():
     user_debt = json.loads(request.data) # this function expects a JSON from the INDEX.js file
