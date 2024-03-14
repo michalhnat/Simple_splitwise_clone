@@ -9,13 +9,25 @@ Welcome to Simple Splitwise Clone! This project is a streamlined version of Spli
 - **Expense Sharing**: Add your expenses and share them with friends or groups.
 - **Debt Simplification**: Automatically calculates and simplifies debts among users, making it easier to settle up.
 
-## Setup & Installation
+# Setup & Installation
 
-To get started with the Simple Splitwise Clone, clone this repository and install the required dependencies:
+To get started with the Simple Splitwise Clone, follow these steps to set up your environment:
 
 ```bash
+# Clone this repository
 git clone <repo-url>
 cd simple_splitwise_clone
+
+# Create a virtual environment
+python -m venv venv
+
+# Activate the virtual environment
+# On Windows
+venv\Scripts\activate
+# On Unix or MacOS
+source venv/bin/activate
+
+# Install the required dependencies
 pip install -r requirements.txt
 ```
 
